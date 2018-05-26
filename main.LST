@@ -1,0 +1,120 @@
+C51 COMPILER V9.01   MAIN                                                                  05/09/2018 09:21:46 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\KEIL\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include "curatins.c"
+   2          
+   3          void main(void)
+   4          {
+   5   1              Timer0Init();
+   6   1              bright = TLC549();
+   7   1              //writeData();
+   8   1              //saveData();
+   9   1              readData();
+  10   1              temp = dataTime[minutes];
+  11   1              while(1)
+  12   1              {
+  13   2                      if( dataTime[minutes] != temp )
+  14   2                      {
+  15   3                              saveData();
+  16   3                              temp = dataTime[minutes];
+  17   3                      }
+  18   2                      if( k20 == 0 )
+  19   2                      {
+  20   3                              delay1(500);
+  21   3                              if( k20 == 0 )
+  22   3                              {
+  23   4                                      switch( modelSystem )
+  24   4                                      {
+  25   5                                              case TIMING:
+  26   5                                                      checkBright = TRUE;
+  27   5                                                      modelSystem = AUTO;
+  28   5                                                      break;
+  29   5                                              case AUTO:
+  30   5                                                      checkBright = FALSE;
+  31   5                                                      modelMotorZ = STOP_Z;
+  32   5                                                      modelMotorF = STOP_F;
+  33   5                                                      modelSystem = MANUAL;
+  34   5                                                      break;
+  35   5                                              case MANUAL:
+  36   5                                                      checkBright = FALSE;
+  37   5                                                      isStop = FALSE;
+  38   5                                                      modelSystem = TIMING;
+  39   5                                                      break;
+  40   5                                      }
+  41   4                              }
+  42   3                              while(!k20);
+  43   3                      }
+  44   2      
+  45   2                      switch( modelSystem )
+  46   2                      {
+  47   3                              case AUTO:
+  48   3                                      modelAuto();
+  49   3                                      break;
+  50   3                              case MANUAL:
+  51   3                                      modelManual();
+  52   3                                      break;
+  53   3                              case TIMING:
+  54   3                                      modelTiming();
+  55   3                                      break;
+C51 COMPILER V9.01   MAIN                                                                  05/09/2018 09:21:46 PAGE 2   
+
+  56   3                      }
+  57   2              }
+  58   1      }
+  59          
+  60          void Timer0Init(void)
+  61          {
+  62   1              TMOD |= 0x01;
+  63   1              TH0 = 0xFC;
+  64   1              TL0 = 0x18;
+  65   1              ET0 = 1;
+  66   1              EA = 1;
+  67   1              TR0 = 1;
+  68   1      }
+  69          
+  70          void Timer0() interrupt 1
+  71          {
+  72   1              static uint count;
+  73   1              static uint i;
+  74   1              TH0 = 0xFC;
+  75   1              TL0 = 0x18;
+  76   1              ++i;
+  77   1              if( i == 500 )
+  78   1              {
+  79   2                      flag = !flag;
+  80   2              }
+  81   1              if( i == 1000 )
+  82   1              {
+  83   2                      i = 0;
+  84   2                      dataProcess();
+  85   2                      if(checkBright )
+  86   2                      {
+  87   3                              bright = TLC549();
+  88   3                      }
+  89   2                      if( ++count == 60 )
+  90   2                      {
+  91   3                              count = 0;
+  92   3                              temp = dataTime[minutes];
+  93   3                      }
+  94   2              }
+  95   1      }       
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2882    ----
+   CONSTANT SIZE    =     19    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     71       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      4    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

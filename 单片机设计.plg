@@ -1,0 +1,59 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\hp\Desktop\5.4\单片机设计( 实验版)2.0\单片机设计.uvproj
+Project File Date:  05/04/2018
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling main.c...
+compiling 24c02.c...
+compiling tlc549.c...
+compiling ULN2003.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?READDATA?MAIN
+Program Size: data=85.4 xdata=0 code=3641
+creating hex file from "单片机设计"...
+"单片机设计" - 0 Error(s), 1 Warning(s).
+Build target 'Target 1'
+compiling main.c...
+CURATINS.C(4): error C141: syntax error near 'void'
+CURATINS.C(5): error C231: '_delay1': redefinition
+CURATINS.C(5): error C141: syntax error near '{'
+CURATINS.C(10): error C231: 'delay': redefinition
+CURATINS.C(10): error C141: syntax error near '{'
+CURATINS.C(15): error C231: 'modelAuto': redefinition
+CURATINS.C(15): error C141: syntax error near '{'
+CURATINS.C(18): error C247: non-address/-constant initializer
+CURATINS.C(19): error C231: 'L1': redefinition
+CURATINS.C(19): error C231: 'L1': redefinition
+CURATINS.C(20): error C231: 'L2': redefinition
+CURATINS.C(20): error C231: 'L2': redefinition
+CURATINS.C(21): error C231: 'L3': redefinition
+CURATINS.C(21): error C231: 'L3': redefinition
+CURATINS.C(23): error C141: syntax error near 'switch'
+CURATINS.C(24): error C129: missing ';' before '{'
+Target not created
+Build target 'Target 1'
+compiling main.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?READDATA?MAIN
+Program Size: data=85.4 xdata=0 code=3641
+creating hex file from "单片机设计"...
+"单片机设计" - 0 Error(s), 1 Warning(s).
+Build target 'Target 1'
+compiling main.c...
+linking...
+Program Size: data=83.4 xdata=0 code=3650
+creating hex file from "单片机设计"...
+"单片机设计" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling main.c...
+linking...
+Program Size: data=83.4 xdata=0 code=3644
+creating hex file from "单片机设计"...
+"单片机设计" - 0 Error(s), 0 Warning(s).

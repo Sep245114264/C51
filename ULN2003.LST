@@ -1,0 +1,62 @@
+C51 COMPILER V9.01   ULN2003                                                               05/09/2018 09:14:38 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE ULN2003
+OBJECT MODULE PLACED IN ULN2003.OBJ
+COMPILER INVOKED BY: D:\KEIL\C51\BIN\C51.EXE ULN2003.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include "ULN2003.h"
+   2          
+   3          void delayM(uint z)
+   4          {
+   5   1          uint i, j;
+   6   1          for( i = z; i > 0; --i )
+   7   1          {
+   8   2              for( j = 110; j > 0; --j );
+   9   2          }
+  10   1      }
+  11          
+  12          void motorZ()
+  13          {
+  14   1          A_M;
+  15   1          delayM(3);
+  16   1          B_M;
+  17   1          delayM(3);
+  18   1          C_M;
+  19   1          delayM(3);
+  20   1          D_M;
+  21   1          delayM(3);
+  22   1      }
+  23          
+  24          void motorF()
+  25          {                                                                                                                                                                                                                                
+  26   1          D_M;                                                                                                                                                                                                                 
+  27   1          delayM(3);
+  28   1          C_M;                                                                                                                                                                                                                        
+  29   1          delayM(3);                                                                                                                                                                                  
+  30   1          B_M;
+  31   1          delayM(3);
+  32   1          A_M;
+  33   1          delayM(3);
+  34   1      }
+  35          
+  36          void motorStop()
+  37          {
+  38   1          a = 1; b = 1; c = 1; d = 1;
+  39   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    128    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

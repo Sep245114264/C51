@@ -1,0 +1,588 @@
+C51 COMPILER V9.01   CURATINS                                                              05/04/2018 08:34:25 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE CURATINS
+OBJECT MODULE PLACED IN curatins.OBJ
+COMPILER INVOKED BY: C:\Keil4\C51\BIN\C51.EXE curatins.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include "curatins.h"
+   2          #include "main.h"
+   3          
+   4          
+   5          void delay1(uint i)
+   6          {
+   7   1              while(i--);     
+   8   1      }
+   9          
+  10          void delay(uint i)
+  11          {
+  12   1              while(i--);     
+  13   1      }
+  14          
+  15          void modelAuto(void)
+  16          {
+  17   1              static uint pressDisplay = 0;
+  18   1              static uint pressChange = 0;
+  19   1              uint speed = FALSE;
+  20   1              L1 = 0;
+  21   1              L2 = 1;
+  22   1              L3 = 1;
+  23   1              
+  24   1              switch( modelBright )
+  25   1              {
+  26   2                      case DATA:
+  27   2                              parseData();
+  28   2                              break;
+  29   2                      case CLOCK:
+  30   2                              parseClock();
+  31   2                              break;
+  32   2                      case CHANGE:
+  33   2                              parseBrightChange();
+  34   2                              break;
+  35   2                      case SAVE:
+  36   2                              init();
+  37   2                              writeData();
+  38   2                              modelBright = CLOCK;
+  39   2                              break;
+  40   2              } 
+  41   1              smgDisplay();
+  42   1              if( modelBright == CHANGE )
+  43   1              {
+  44   2                      if( k17 == 0 )
+  45   2                      {
+  46   3                              delay(500);
+  47   3                              if( k17 == 0)
+  48   3                              {
+  49   4                                      --brightLimit;
+  50   4                                      if( brightLimit < 0 )
+  51   4                                      {
+  52   5                                              brightLimit = 0;
+  53   5                                      }
+  54   4                                      while(!k17);
+  55   4                              }
+C51 COMPILER V9.01   CURATINS                                                              05/04/2018 08:34:25 PAGE 2   
+
+  56   3                      
+  57   3                      }
+  58   2                      if( k18 == 0 )
+  59   2                      {
+  60   3                              delay(500);
+  61   3                              if( k18 == 0 )
+  62   3                              {
+  63   4                                      ++brightLimit;
+  64   4                                      if( brightLimit > 600 )
+  65   4                                      {
+  66   5                                              brightLimit = 600;
+  67   5                                      }
+  68   4                                      while(!k18);
+  69   4                              }
+  70   3                      }
+  71   2              }
+  72   1              else
+  73   1              {
+  74   2                      if( k17 == 0 )
+  75   2                      {
+  76   3                              //delay(500);
+  77   3                              //if( k17 == 0 )
+  78   3                              {
+  79   4                                      motorStop();
+  80   4                                      checkBright = FALSE;
+  81   4                              }
+  82   3                      }
+  83   2                      if(     k18 == 0 )
+  84   2                      {
+  85   3                              delay(500);
+  86   3                              if( k18 == 0 )
+  87   3                              {
+  88   4                                      if( !pressDisplay )
+  89   4                                      {
+  90   5                                              modelBright = DATA;
+  91   5                                              pressDisplay = TRUE;
+  92   5                                              pressChange = FALSE;    //保证在任意一种显示模式都可以进行亮度阈值的设置
+  93   5                                      }
+  94   4                                      else
+  95   4                                      {
+  96   5                                              modelBright = CLOCK;
+  97   5                                              pressDisplay = FALSE;
+  98   5                                              pressChange = FALSE;
+  99   5                                      }
+ 100   4                              }
+ 101   3                      }
+ 102   2                      while( !k18 );
+ 103   2              }
+ 104   1              if( k19 == 0 )
+ 105   1              {
+ 106   2                      delay(500);
+ 107   2                      if( k19 == 0 )
+ 108   2                      {
+ 109   3                              if( !pressChange )
+ 110   3                              {
+ 111   4                                      modelBright = CHANGE;
+ 112   4                                      pressChange = TRUE;
+ 113   4                                      checkBright = FALSE;
+ 114   4                              }
+ 115   3                              else
+ 116   3                              {
+ 117   4                                      modelBright = SAVE;
+C51 COMPILER V9.01   CURATINS                                                              05/04/2018 08:34:25 PAGE 3   
+
+ 118   4                                      pressChange = FALSE;
+ 119   4                                      pressDisplay = FALSE;
+ 120   4                                      checkBright = TRUE;
+ 121   4                              }
+ 122   3                      }
+ 123   2                      while(!k19);
+ 124   2              }
+ 125   1              if( checkBright )
+ 126   1              {
+ 127   2                      if( (bright < brightLimit) )
+ 128   2                      {
+ 129   3                              
+ 130   3                              motorZ();
+ 131   3                      }
+ 132   2                      else
+ 133   2                      {
+ 134   3                              motorF();
+ 135   3                      }
+ 136   2              }
+ 137   1      }
+ 138          
+ 139          void modelManual(void)
+ 140          {
+ 141   1              L1 = 1;
+ 142   1              L2 = 0;
+ 143   1              L3 = 1;
+ 144   1              parseClock();
+ 145   1              smgDisplay();
+ 146   1              if( k17 == 0 )
+ 147   1              {
+ 148   2                      delay(500);
+ 149   2                      if( k17 == 0 )
+ 150   2                      {
+ 151   3                              motorStop();
+ 152   3                              modelMotorZ = STOP_Z;
+ 153   3                              modelMotorF = STOP_F;
+ 154   3                      }
+ 155   2                      while(!k17);
+ 156   2              }
+ 157   1              if( k19 == 0 )
+ 158   1              {
+ 159   2                      delay(500);
+ 160   2                      if( k19 == 0 )
+ 161   2                      {
+ 162   3                              switch( modelMotorZ )
+ 163   3                              {       
+ 164   4                                      case START_Z:
+ 165   4                                              modelMotorZ = STOP_Z;
+ 166   4                                              modelMotorF = STOP_F;
+ 167   4                                              break;
+ 168   4                                      case STOP_Z:
+ 169   4                                              modelMotorZ = START_Z;
+ 170   4                                              modelMotorF = STOP_F;
+ 171   4                                              break;
+ 172   4                              }
+ 173   3                      }
+ 174   2                      while(!k19);
+ 175   2              }
+ 176   1              if( k18 == 0 )
+ 177   1              {
+ 178   2                      delay(500);
+ 179   2                      if( k18 == 0 )
+C51 COMPILER V9.01   CURATINS                                                              05/04/2018 08:34:25 PAGE 4   
+
+ 180   2                      {
+ 181   3                              switch( modelMotorF )
+ 182   3                              {
+ 183   4                                      case START_F:
+ 184   4                                              modelMotorZ = STOP_Z;
+ 185   4                                              modelMotorF = STOP_F;
+ 186   4                                              break;
+ 187   4                                      case STOP_F:
+ 188   4                                              modelMotorZ = STOP_Z;
+ 189   4                                              modelMotorF = START_F;
+ 190   4                                              break;
+ 191   4                              }
+ 192   3                      }
+ 193   2                      while(!k18);
+ 194   2              }
+ 195   1              if( modelMotorZ == START_Z && modelMotorF == STOP_F )
+ 196   1              {
+ 197   2                      switch( modelMotorZ )
+ 198   2                      {
+ 199   3                              case START_Z:
+ 200   3                                      motorZ();
+ 201   3                                      break;
+ 202   3                              case STOP_Z:
+ 203   3                                      motorStop();
+ 204   3                                      break;
+ 205   3                      }
+ 206   2              }
+ 207   1              if( modelMotorZ == STOP_Z && modelMotorF == START_F)
+ 208   1              {
+ 209   2                      switch( modelMotorF )
+ 210   2                      {
+ 211   3                              case START_F:
+ 212   3                                      motorF();
+ 213   3                                      break;
+ 214   3                              case STOP_F:
+ 215   3                                      motorStop();
+ 216   3                                      break;
+ 217   3                      }
+ 218   2              }
+ 219   1      }
+ 220          
+ 221          void modelTiming(void)
+ 222          {
+ 223   1              L1 = 1;
+ 224   1              L2 = 1;
+ 225   1              L3 = 0;
+ 226   1      
+ 227   1              if( k19 == 0 )
+ 228   1              {
+ 229   2                      delay(500);
+ 230   2                      if( k19 == 0 )
+ 231   2                      {
+ 232   3                              switch( modelSettings )
+ 233   3                              {
+ 234   4                                      case DISPLAY:
+ 235   4                                              modelSettings = STIME;
+ 236   4                                              break;
+ 237   4                                      case STIME:
+ 238   4                                              modelSettings = ETIME;
+ 239   4                                              break;
+ 240   4                                      case ETIME:
+ 241   4                                              modelSettings = RETURN;
+C51 COMPILER V9.01   CURATINS                                                              05/04/2018 08:34:25 PAGE 5   
+
+ 242   4                                              break;
+ 243   4                                      case RETURN:
+ 244   4                                              modelSettings = DISPLAY;
+ 245   4                                              break;
+ 246   4                              }
+ 247   3                      }
+ 248   2                      while(!k19);
+ 249   2              }
+ 250   1              switch(  modelSettings )
+ 251   1              {
+ 252   2                      case DISPLAY:
+ 253   2                              parseSettings();
+ 254   2                              if( !isStop )
+ 255   2                              {
+ 256   3                                      if( judgeTime() )
+ 257   3                                      {
+ 258   4                                              motorZ();
+ 259   4                                      }
+ 260   3                                      else
+ 261   3                                      {
+ 262   4                                              motorF();
+ 263   4                                      }
+ 264   3                              }
+ 265   2                              if( k17 == 0 )
+ 266   2                              {
+ 267   3                                      delay(500);
+ 268   3                                      if( k17 == 0 )
+ 269   3                                      {
+ 270   4                                              motorStop();
+ 271   4                                              isStop = TRUE;
+ 272   4                                      }
+ 273   3                                      while(!k17);
+ 274   3                              }
+ 275   2                              break;
+ 276   2                      case STIME:
+ 277   2                              parseSettings();
+ 278   2                              if( k17 == 0 )
+ 279   2                              {
+ 280   3                                      delay(500);
+ 281   3                                      if( k17 == 0 )
+ 282   3                                      {
+ 283   4                                              if( ++startTime[startTimeMinutes] == 60 )
+ 284   4                                              {
+ 285   5                                                      startTime[startTimeMinutes] = 0;
+ 286   5                                                      if( ++startTime[startTimeHours] == 24 )
+ 287   5                                                      {
+ 288   6                                                              startTime[startTimeHours] = 0;
+ 289   6                                                      }
+ 290   5                                              }
+ 291   4                                      }
+ 292   3                                      while(!k17);
+ 293   3                              }
+ 294   2                              if( k18 == 0 )
+ 295   2                              {
+ 296   3                                      delay(500);
+ 297   3                                      if( k18 == 0 )
+ 298   3                                      {
+ 299   4                                              if( ++startTime[startTimeHours] == 24 )
+ 300   4                                              {
+ 301   5                                                      startTime[startTimeHours] = 0;
+ 302   5                                              }
+ 303   4                                      }
+C51 COMPILER V9.01   CURATINS                                                              05/04/2018 08:34:25 PAGE 6   
+
+ 304   3                                      while(!k18);
+ 305   3                              }
+ 306   2                              break;
+ 307   2                      case ETIME:
+ 308   2                              parseSettings();
+ 309   2                              if( k17 == 0 )
+ 310   2                              {
+ 311   3                                      delay(500);
+ 312   3                                      if( k17 == 0 )
+ 313   3                                      {
+ 314   4                                              if( ++endTime[endTimeMinutes] == 60 )
+ 315   4                                              {
+ 316   5                                                      endTime[endTimeMinutes] = 0;
+ 317   5                                                      if( ++endTime[endTimeHours] == 24 )
+ 318   5                                                      {
+ 319   6                                                              endTime[endTimeHours] = 0;
+ 320   6                                                      }
+ 321   5                                              }
+ 322   4                                      }
+ 323   3                                      while(!k17);
+ 324   3                              }
+ 325   2                              if( k18 == 0 )
+ 326   2                              {
+ 327   3                                      delay(500);
+ 328   3                                      if( k18 == 0 )
+ 329   3                                      {
+ 330   4                                              if( ++endTime[endTimeHours] == 24 )
+ 331   4                                              {
+ 332   5                                                      endTime[endTimeHours] = 0;
+ 333   5                                              }
+ 334   4                                      }
+ 335   3                                      while(!k18);
+ 336   3                              }
+ 337   2                              break;
+ 338   2                      case RETURN:
+ 339   2                              init();
+ 340   2                              writeData();
+ 341   2                              modelSystem = AUTO;
+ 342   2                              break;
+ 343   2              }
+ 344   1              smgDisplay();
+ 345   1      }
+ 346          
+ 347          bit judgeTime()
+ 348          {
+ 349   1              if( dataTime[hours] <= endTime[endTimeHours] && dataTime[hours] >= startTime[startTimeHours] )
+ 350   1              {
+ 351   2                      if( dataTime[minutes] <= endTime[endTimeMinutes] &&     dataTime[minutes] >= startTime[startTimeMinutes] )
+ 352   2                      {
+ 353   3                              return TRUE;
+ 354   3                      }
+ 355   2              }
+ 356   1              return FALSE;
+ 357   1      }
+ 358          
+ 359          void Timer0Init(void)
+ 360          {
+ 361   1              TMOD |= 0x01;
+ 362   1              TH0 = 0xFC;
+ 363   1              TL0 = 0x18;
+ 364   1              ET0 = 1;
+ 365   1              EA = 1;
+C51 COMPILER V9.01   CURATINS                                                              05/04/2018 08:34:25 PAGE 7   
+
+ 366   1              TR0 = 1;
+ 367   1      }
+ 368          
+ 369          void Timer0() interrupt 1
+ 370          {
+ 371   1              static uint i;
+ 372   1              TH0 = 0xFC;
+ 373   1              TL0 = 0x18;
+ 374   1              ++i;
+ 375   1              if( i == 500 )
+ 376   1              {
+ 377   2                      flag = !flag;
+ 378   2              }
+ 379   1              if( i == 1000 )
+ 380   1              {
+ 381   2                      i = 0;
+ 382   2                      dataProcess();
+ 383   2                      if(checkBright )
+ 384   2                      {
+ 385   3                              bright = TLC549();
+ 386   3                      }
+ 387   2              }
+ 388   1      } 
+ 389          
+ 390          void dataProcess(void)
+ 391          {
+ 392   1              ++dataTime[seconds];
+ 393   1              if( dataTime[seconds] == 60 )
+ 394   1              {
+ 395   2                      dataTime[seconds] = 0;
+ 396   2                      if( ++dataTime[minutes] == 60 )
+ 397   2                      {
+ 398   3                              dataTime[minutes] = 0;
+ 399   3                              if( ++dataTime[hours] == 24 )
+ 400   3                              {
+ 401   4                                      dataTime[hours] = 0;
+ 402   4                                      if( ++dataTime[days] == 30 )
+ 403   4                                      {
+ 404   5                                              dataTime[days] = 0;
+ 405   5                                              if( ++dataTime[months] == 12 )
+ 406   5                                              {
+ 407   6                                                      dataTime[months] = 0;
+ 408   6                                                      ++dataTime[years];
+ 409   6                                              }
+ 410   5                                      }
+ 411   4                              }
+ 412   3                      }
+ 413   2              }
+ 414   1      }
+ 415          
+ 416          void parseData()
+ 417          {
+ 418   1              disp[0] = smgDuan[dataTime[years] / 1000];
+ 419   1              disp[1] = smgDuan[dataTime[years] / 100 % 10];
+ 420   1              disp[2] = smgDuan[dataTime[years] / 10 % 100];
+ 421   1              disp[3] = smgDuan[dataTime[years] % 10] & 0x7F;
+ 422   1              disp[4] = smgDuan[dataTime[months] / 10];
+ 423   1              disp[5] = smgDuan[dataTime[months] % 10] & 0x7F;
+ 424   1              disp[6] = smgDuan[dataTime[days] / 10];
+ 425   1              disp[7] = smgDuan[dataTime[days] % 10];
+ 426   1      }
+ 427          
+C51 COMPILER V9.01   CURATINS                                                              05/04/2018 08:34:25 PAGE 8   
+
+ 428          void parseClock()
+ 429          {
+ 430   1              disp[0] = smgDuan[dataTime[hours] / 10];
+ 431   1              if( flag )
+ 432   1              {
+ 433   2                      disp[1] = smgDuan[dataTime[hours] % 10] & 0x7F;
+ 434   2              }
+ 435   1              else
+ 436   1              {
+ 437   2                      disp[1] = smgDuan[dataTime[hours] % 10];
+ 438   2              }
+ 439   1              disp[2] = smgDuan[dataTime[minutes] / 10];
+ 440   1              disp[3] = smgDuan[dataTime[minutes] % 10];
+ 441   1              disp[4] = smgDuan[10];
+ 442   1              disp[5] = smgDuan[bright / 100];
+ 443   1              disp[6] = smgDuan[bright / 10 % 10];
+ 444   1              disp[7] = smgDuan[bright % 10];
+ 445   1              //disp[1] = smgDuan[dataTime[seconds] / 10];
+ 446   1              //disp[0] = smgDuan[dataTime[seconds] % 10];
+ 447   1      }
+ 448          
+ 449          void parseBrightChange(void)
+ 450          {
+ 451   1              disp[0] = 0xFF;
+ 452   1              disp[1] = 0xFF;
+ 453   1              disp[2] = 0xFF;
+ 454   1              disp[3] = 0xFF;
+ 455   1              disp[4] = 0xFF;
+ 456   1              disp[5] = smgDuan[brightLimit / 100];
+ 457   1              disp[6] = smgDuan[brightLimit / 10 % 10];
+ 458   1              disp[7] = smgDuan[brightLimit % 10];
+ 459   1      }
+ 460          
+ 461          void parseSettings(void)
+ 462          {
+ 463   1              uint startFlag = FALSE;
+ 464   1              uint endFlag = FALSE;
+ 465   1              switch( modelSettings )
+ 466   1              {
+ 467   2                      case STIME:
+ 468   2                              startFlag = flag;
+ 469   2                              break;
+ 470   2                      case ETIME:
+ 471   2                              endFlag = flag;
+ 472   2                              break;
+ 473   2              }
+ 474   1              if( !startFlag )
+ 475   1              {
+ 476   2                      disp[0] = smgDuan[startTime[startTimeHours] / 10];
+ 477   2                      disp[1] = smgDuan[startTime[startTimeHours] % 10] & 0x7F;
+ 478   2                      disp[2] = smgDuan[startTime[startTimeMinutes] / 10];
+ 479   2                      disp[3] = smgDuan[startTime[startTimeMinutes] % 10] & 0x7F;
+ 480   2              }
+ 481   1              else
+ 482   1              {
+ 483   2                      disp[0] = 0xFF;
+ 484   2                      disp[1] = 0xFF;
+ 485   2                      disp[2] = 0xFF;
+ 486   2                      disp[3] = 0xFF;
+ 487   2              }
+ 488   1              if( !endFlag )
+ 489   1              {
+C51 COMPILER V9.01   CURATINS                                                              05/04/2018 08:34:25 PAGE 9   
+
+ 490   2                      disp[4] = smgDuan[endTime[endTimeHours] / 10];
+ 491   2                      disp[5] = smgDuan[endTime[endTimeHours] % 10] & 0x7F;
+ 492   2                      disp[6] = smgDuan[endTime[endTimeMinutes] / 10];
+ 493   2                      disp[7] = smgDuan[endTime[endTimeMinutes] % 10];
+ 494   2              }
+ 495   1              else
+ 496   1              {
+ 497   2                      disp[4] = 0xFF;
+ 498   2                      disp[5] = 0xFF;
+ 499   2                      disp[6] = 0xFF;
+ 500   2                      disp[7] = 0xFF; 
+ 501   2              }
+ 502   1      }
+ 503          
+ 504          void smgDisplay(void)
+ 505          {
+ 506   1              uchar i = 0;
+ 507   1              //parseData();
+ 508   1              
+ 509   1              for( i = 0; i < 8; ++i )
+ 510   1              {
+ 511   2                      P2= smgWei[i];
+ 512   2                      P0 = disp[i];
+ 513   2                      //P0 = 0xC0;
+ 514   2                      delay(100);
+ 515   2                      P0 =0xFF;
+ 516   2              }
+ 517   1      }
+ 518                  
+ 519          void writeData(void)
+ 520          {
+ 521   1              init();
+ 522   1              writeAdd(BRIGHT_LIMIT, brightLimit);
+ 523   1              delay(500);
+ 524   1              writeAdd(START_TIME_HOURS, startTime[startTimeHours]);
+ 525   1              delay(500);
+ 526   1              writeAdd(START_TIME_MINUTES, startTime[startTimeMinutes]);
+ 527   1              delay(500);
+ 528   1              writeAdd(END_TIME_HOURS, endTime[endTimeHours]);
+ 529   1              delay(500);
+ 530   1              writeAdd(END_TIME_MINUTES, endTime[endTimeMinutes]);
+ 531   1              delay(500);     
+ 532   1      }
+ 533          
+ 534          void readData(void)
+ 535          {
+ 536   1              init();
+ 537   1              brightLimit = readAdd(BRIGHT_LIMIT);
+ 538   1              delay(500);
+ 539   1              startTime[startTimeHours] = readAdd(START_TIME_HOURS);
+ 540   1              delay(500);
+ 541   1              startTime[startTimeMinutes] = readAdd(START_TIME_MINUTES);
+ 542   1              delay(500);
+ 543   1              endTime[endTimeHours] = readAdd(END_TIME_HOURS);
+ 544   1              delay(500);
+ 545   1              endTime[endTimeMinutes] = readAdd(END_TIME_MINUTES);
+ 546   1              delay(500);
+ 547   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2424    ----
+C51 COMPILER V9.01   CURATINS                                                              05/04/2018 08:34:25 PAGE 10  
+
+   CONSTANT SIZE    =     19    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     71       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
